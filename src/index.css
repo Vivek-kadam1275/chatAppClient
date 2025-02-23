@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+
+@import "tailwindcss";
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 0.2rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #ffffff39;
+    width: 0.1rem;
+    border-radius: 1rem;
+  }
+
+
+}
+
+/* Main Emoji Picker Container */
+.emoji-picker-react {
+  position: absolute;
+  top: -260px;
+  left: 0px;
+  background-color: #080420 !important;
+  box-shadow: 0 2px 5px #9a86f3 !important;
+  border: 1px solid #9a86f3 !important;
+  padding: 8px;
+  border-radius: 8px;
+}
+.emoji-picker-react   input[type="text"]{
+  background: transparent !important;
+  border-color:  #9a86f3;
+}
+
+.emoji-picker-react h2{
+   background-color: #080420;
+}
+.emoji-picker-react div::-webkit-scrollbar {
+  background-color: #080420;
+  width: 10px;
+}
+ 
+.emoji-picker-react div::-webkit-scrollbar-thumb  {
+  background-color: #9a86f3;
+   
+}
+
+
+
+
+body,
+button,
+input {
+  font-family: "Josefin Sans", sans-serif;
+  font-optical-sizing: auto;
+  /* font-weight: 20; */
+  /* (20 is not a valid font-weight) */
+  font-style: normal;
+}
+
+body {
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+
+/* * {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+} */
+
+/* input{
+  background-color: transparent;
+  padding: 1rem;
+  border: 0.1rem solid #4e0eff;
+  border-radius: 0.4rem;
+  color: white;
+  width: 100%;
+  font-size: 1rem;
+  
+  } */
