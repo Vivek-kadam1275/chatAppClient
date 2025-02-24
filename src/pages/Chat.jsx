@@ -5,7 +5,9 @@ import { getAllUsers } from "../utils/ApiRoutes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Welcome from "../components/Welcome";
-
+import { io } from "socket.io-client";
+import { baseUrl } from "../utils/ApiRoutes";
+var socket;
 const Chat = (props) => {
 
   const [contacts, setContacts] = useState([]);
@@ -50,6 +52,21 @@ const Chat = (props) => {
     }
   }, [currentUser])
 
+
+   
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      socket = io(baseUrl);
+
+      socket.emit("setup", currentUser);
+      socket.on("connected", () => {
+        setSocketConnected(true);
+      })
+    }
+  }, [currentUser]);
+
   const handleChatChange = (contact) => {
     setCurrentChat(contact);
     // console.log(contact);
@@ -62,7 +79,7 @@ const Chat = (props) => {
         <Contacts contacts={contacts} currentUser={currentUser} handleChatChange={handleChatChange} />
 
 
-        {currentChat === undefined ? <Welcome currentUser={currentUser} /> : <ChatContainer currentChat={currentChat} />}
+        {currentChat === undefined ? <Welcome currentUser={currentUser} /> : <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} socketConnected={socketConnected}/>}
       </div>
     </div>
   )

@@ -1,17 +1,34 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState  } from "react"
 import Logout from "./Logout.jsx";
 import ChatInput from "./ChatInput.jsx";
 import ChatMessage from "./ChatMessage.jsx";
 import { addMsg, getMsgs } from "../utils/ApiRoutes.jsx";
+var selectedChatCompare;
+const ChatContainer = ({ currentChat, currentUser,socket, socketConnected }) => {
+  // trial of socket:
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     socket = io(baseUrl);
 
-const ChatContainer = ({ currentChat }) => {
+  //     socket.emit("setup", currentUser);
+  //     socket.on("connected", () => {
+  //       setSocketConnected(true);
+  //     })
+  //   }
+  // }, [])
+
   // console.log(currentChat);
-  const [loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const handleSendMsg = async (msg) => {
     // console.log(msg);
-    alert(msg);
+    // alert(msg);
     const to = currentChat._id;
+    const from = currentUser._id;
+    if (socket && socketConnected) {
+      socket.emit("send-msg", { from, to, msg });
+    }
+
     const response = await fetch(addMsg, {
       method: "POST",
       headers: {
@@ -22,8 +39,11 @@ const ChatContainer = ({ currentChat }) => {
     })
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
+    const msgs = [...messages];
+    msgs.push({ senderBoolean: true, message: msg });
+    setMessages(msgs);
 
   }
 
@@ -40,15 +60,35 @@ const ChatContainer = ({ currentChat }) => {
     })
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     setMessages(data.data);
     setLoading(false);
+
+    // socket.emit("join-chat", to)
+
   }
 
   useEffect(() => {
     getMessages();
+    selectedChatCompare = currentChat;
   }, [currentChat])
+
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  useEffect(() => {
+    if(socket && socketConnected){
+
+      socket.on("msg-recieve", (msg) => {
+        setArrivalMessage({ fromSelf: false, message: msg });
+      });
+    }
+  });
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+   
 
   return (
     <div className="flex flex-col pt-3 w-3/4  overflow-hidden gap-1">
@@ -68,7 +108,7 @@ const ChatContainer = ({ currentChat }) => {
         </div>
         <Logout />
       </div>
-      <ChatMessage messages={messages} loading={loading}/>
+      <ChatMessage messages={messages} loading={loading} />
       <ChatInput handleSendMsg={handleSendMsg} />
 
     </div>
