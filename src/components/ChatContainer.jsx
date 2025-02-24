@@ -1,10 +1,10 @@
-import React, { useEffect, useState  } from "react"
+import React, { useEffect, useState } from "react"
 import Logout from "./Logout.jsx";
 import ChatInput from "./ChatInput.jsx";
 import ChatMessage from "./ChatMessage.jsx";
 import { addMsg, getMsgs } from "../utils/ApiRoutes.jsx";
 var selectedChatCompare;
-const ChatContainer = ({ currentChat, currentUser,socket, socketConnected }) => {
+const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) => {
   // trial of socket:
   // useEffect(() => {
   //   if (currentUser) {
@@ -77,7 +77,7 @@ const ChatContainer = ({ currentChat, currentUser,socket, socketConnected }) => 
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
   useEffect(() => {
-    if(socket && socketConnected){
+    if (socket && socketConnected) {
 
       socket.on("msg-recieve", (msg) => {
         setArrivalMessage({ fromSelf: false, message: msg });
@@ -88,23 +88,23 @@ const ChatContainer = ({ currentChat, currentUser,socket, socketConnected }) => 
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
 
-   
+
 
   return (
     <div className="flex flex-col pt-3 w-3/4  overflow-hidden gap-1">
 
-      <div className="chat-header flex justify-between items-center px-4 h-[10%]">
-        <div className="user-details flex items-center gap-4">
+      <div className="chat-header flex justify-between items-center sm:px-2 md:px-4 :lg:px-4 h-[10%] gap-2">
+        <div className="user-details flex items-center   gap-4">
 
           <img
             src={currentChat.avatarImage}
-            alt="avatar"
-            className="w-12"
+            alt="avt"
+            className="w-8 sm:w-10  lg:w-12 "
           />
 
-          <div className="username text-2xl text-white">
-            <h3>{currentChat.username}</h3>
-          </div>
+
+          <h3 className="username text-xl md:text-2xl lg:text-3xl text-white">{currentChat.username}</h3>
+
         </div>
         <Logout />
       </div>

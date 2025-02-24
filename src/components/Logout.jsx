@@ -45,8 +45,8 @@ const Logout = (props) => {
     }
 
     return (
-        <button className="flex justify-center items-center p-2 rounded-md bg-[#9a86f3] cursor-pointer" onClick={handleLogout}>
-            <MdOutlineLogout className="text-1xl text-[#ebe7ff]" />
+        <button className="flex justify-center items-center p-1 sm:p-2 rounded-md bg-[#9a86f3] cursor-pointer" onClick={handleLogout}>
+            <MdOutlineLogout className=" text-xl sm:text-2xl text-[#ebe7ff]" />
 
         </button>
     )

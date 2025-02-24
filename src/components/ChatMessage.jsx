@@ -9,7 +9,7 @@ const ChatMessage = ({ messages, loading }) => {
   }, [messages]); // Scrolls when messages update
 
   return (
-    <div className="h-[75%] w-full text-white  py-4 px-2 overflow-auto" >
+    <div className="h-[80%] w-full text-white  py-4 px-2 overflow-auto" >
       {loading ? <div>loading</div> :
         <div className={`flex flex-col gap-5  `}>
           {messages.map((message, id) => {
