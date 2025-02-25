@@ -1,12 +1,20 @@
-import React, { useRef ,useEffect} from "react"
-
-const ChatMessage = ({ messages, loading }) => {
-
+import React, { useRef, useEffect } from "react"
+import animationData from "../animations/typing.json";
+import Lottie from "react-lottie";
+const ChatMessage = ({ messages, loading, istyping }) => {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]); // Scrolls when messages update
+  }, [messages,istyping]); // Scrolls when messages update
 
   return (
     <div className="h-[80%] w-full text-white  py-4 px-2 overflow-auto" >
@@ -19,9 +27,16 @@ const ChatMessage = ({ messages, loading }) => {
               </div>
             )
           })}
-           <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
         </div >}
-
+      {istyping ? <div className="text-white">
+        <Lottie
+          options={defaultOptions}
+          // height={50}
+          width={70}
+          style={{ marginBottom: 0, marginLeft: 0 }}
+        />
+      </div> : <></>}
     </div>
   )
 };

@@ -3,7 +3,7 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import EmojiPicker from "emoji-picker-react";
 
-const ChatInput = ({ handleSendMsg }) => {
+const ChatInput = ({ handleSendMsg,socket,currentChat,typing,setTyping }) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [msg, setMsg] = useState("");
 
@@ -13,6 +13,26 @@ const ChatInput = ({ handleSendMsg }) => {
 
     const handleChange = (e) => {
         setMsg(e.target.value);
+
+        if(!socket){
+            return
+        }
+        if(socket && !typing ){
+            setTyping(true);
+            socket.emit("typing",currentChat._id)
+           
+        }
+
+        let lastTypingTime = new Date().getTime();
+        var timerLength = 3000;
+        setTimeout(() => {
+          var timeNow = new Date().getTime();
+          var timeDiff = timeNow - lastTypingTime;
+          if (timeDiff >= timerLength && typing) {
+            socket.emit("stop typing", currentChat._id);
+            setTyping(false);
+          }
+        }, timerLength);
         // console.log(msg)
     }
 

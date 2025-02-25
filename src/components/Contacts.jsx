@@ -31,7 +31,7 @@ const Contacts = ({ contacts, currentUser,handleChatChange }) => {
             <h3 className=" uppercase text-xl md:text-2xl font-bold">snappy</h3>
           </div>
           <div className="h-[5%] w-full flex justify-center items-center">
-            <input type="search" placeholder="search contact" className="w-[90%] h-full border rounded-md px-4 " value={searchContact} name="searchContact" onChange={(e)=>{
+            <input type="search" placeholder="search contact" className="w-[90%] h-full border focus:outline-none border-[#0d5cc7] rounded-md px-4 " value={searchContact} name="searchContact" onChange={(e)=>{
               setSearchContact(e.target.value) ;
             }} />
           </div>

@@ -3,6 +3,8 @@ import Logout from "./Logout.jsx";
 import ChatInput from "./ChatInput.jsx";
 import ChatMessage from "./ChatMessage.jsx";
 import { addMsg, getMsgs } from "../utils/ApiRoutes.jsx";
+
+
 var selectedChatCompare;
 const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) => {
   // trial of socket:
@@ -20,6 +22,10 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
   // console.log(currentChat);
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
+
+  
   const handleSendMsg = async (msg) => {
     // console.log(msg);
     // alert(msg);
@@ -82,6 +88,18 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
       socket.on("msg-recieve", (msg) => {
         setArrivalMessage({ fromSelf: false, message: msg });
       });
+
+      socket.on("typing",()=>{
+        console.log('typing')
+        setIsTyping(true);
+
+
+      })
+
+      socket.on("stop typing",()=>{
+        console.log('stopped typing')
+        setIsTyping(false);
+      })
     }
   });
   useEffect(() => {
@@ -108,8 +126,8 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
         </div>
         <Logout />
       </div>
-      <ChatMessage messages={messages} loading={loading} />
-      <ChatInput handleSendMsg={handleSendMsg} />
+      <ChatMessage messages={messages} loading={loading} istyping={istyping} />
+      <ChatInput handleSendMsg={handleSendMsg} socket={socket} currentChat={currentChat} setTyping={setTyping} typing={typing} />
 
     </div>
   )
