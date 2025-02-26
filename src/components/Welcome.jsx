@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom";
+import { chatContext } from "../context/chatContext";
 
-const Welcome = ({ currentUser }) => {
+const Welcome = ({}) => {
 
     const [loading, setLoading] = useState(true);
+    const {currentUser}=useContext(chatContext);
+
+// check that currentUser is fetched or not
     useEffect(() => {
         if (currentUser) {
             setLoading(false);

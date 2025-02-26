@@ -1,7 +1,8 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { signupRoute } from "../utils/ApiRoutes";
+import { chatContext } from "../context/chatContext";
 
 const Signup = (props) => {
     const [userData, setUserData] = useState({
@@ -10,7 +11,7 @@ const Signup = (props) => {
         password: "",
         confirmPassword: "",
     });
-    // const baseUrl=import.meta.env.VITE_AUTH_API;
+    const {  toastOptions}=useContext(chatContext);
     const navigate=useNavigate();
     const handleChange = (e) => {
 
@@ -21,13 +22,7 @@ const Signup = (props) => {
         // console.log(userData);
     }
 
-    const toastOptions = {
-        position: "bottom-right",
-        autoClose: 8000,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-    };
+   
     const handleValidation = () => {
         const { username, email, password, confirmPassword } = userData;
 
@@ -75,7 +70,7 @@ const Signup = (props) => {
 
                 } else {
                     toast.error(data.message,toastOptions);
-                    navigate("/login")
+                    navigate("/signup")
                 }
             }
         } catch (error) {

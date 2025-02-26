@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
-import axios from "axios";
 import toast from "react-hot-toast";
-import { setAvatar } from "../utils/ApiRoutes.jsx";
+import { setAvatar } from "../utils/ApiRoutes";
+import { chatContext } from "../context/chatContext";
 import { useNavigate } from "react-router-dom";
 
 const SetAvatar = (props) => {
@@ -9,14 +9,8 @@ const SetAvatar = (props) => {
     const [loading, setLoading] = useState(true);
     const [avatars, setAvatars] = useState();
     const [selectedAvatar, setSelectedAvatar] = useState(undefined);
-    const navigate = useNavigate();
-    const toastOptions = {
-        position: "bottom-right",
-        autoClose: 8000,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-    };
+    const navigate=useNavigate();
+    const {  toastOptions}=useContext(chatContext);
 
     const generateAvatars = () => {
         const newAvatars = Array.from({ length: 4 }, () =>
@@ -29,13 +23,10 @@ const SetAvatar = (props) => {
     };
     useEffect(() => {
         generateAvatars();
-
     }, [])
 
     const handleSelect = (index) => {
-        console.log("clicked")
         setSelectedAvatar(index);
-        // console.log(selectedAvatar);
     }
 
     const setProfilePicture = async () => {
@@ -44,7 +35,6 @@ const SetAvatar = (props) => {
         }
         else {
             try {
-                // console.log(setAvatar); 
                 const response = await fetch(setAvatar, {
                     method: "PATCH",
                     headers: {
@@ -56,9 +46,8 @@ const SetAvatar = (props) => {
                     }),
 
                 });
-                // console.log(response);
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 if (data.success) {
                     toast.success("profile picture set Successfully", toastOptions)
                     navigate("/");
@@ -69,6 +58,7 @@ const SetAvatar = (props) => {
 
             } catch (error) {
                 console.log(error);
+                navigate("/")
             }
         }
 

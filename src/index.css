@@ -20,7 +20,6 @@
 /* Main Emoji Picker Container */
 .emoji-picker-react {
   position: absolute;
-  top: -260px;
   left: 0px;
   background-color: #080420 !important;
   box-shadow: 0 2px 5px #9a86f3 !important;

@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useContext } from "react"
 import animationData from "../animations/typing.json";
 import Lottie from "react-lottie";
-const ChatMessage = ({ messages, loading, istyping }) => {
+import { chatContext } from "../context/chatContext";
+const ChatMessage = ({    }) => {
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -11,6 +12,7 @@ const ChatMessage = ({ messages, loading, istyping }) => {
     },
   };
   const messagesEndRef = useRef(null);
+  const {messages,messagesLoading,istyping}=useContext(chatContext);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -18,7 +20,7 @@ const ChatMessage = ({ messages, loading, istyping }) => {
 
   return (
     <div className="h-[80%] w-full text-white  py-4 px-2 overflow-auto" >
-      {loading ? <div>loading</div> :
+      {messagesLoading ? <div>loader</div> :
         <div className={`flex flex-col gap-5  `}>
           {messages.map((message, id) => {
             return (

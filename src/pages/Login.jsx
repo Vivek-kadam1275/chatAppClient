@@ -1,7 +1,9 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import { loginRoute } from "../utils/ApiRoutes";
+import { chatContext } from "../context/chatContext.jsx";
+ 
 
 const Login = (props) => {
     const [userData, setUserData] = useState({
@@ -9,7 +11,8 @@ const Login = (props) => {
         password: "",
     });
 
-     const navigate=useNavigate();
+    const {toastOptions}=useContext(chatContext);
+    const navigate=useNavigate();
     const handleChange = (e) => {
 
         setUserData((prev) => {
@@ -19,13 +22,7 @@ const Login = (props) => {
         // console.log(userData);
     }
 
-    const toastOptions = {
-        position: "bottom-right",
-        autoClose: 8000,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-    };
+    
     const handleValidation = () => {
         const { username,  password  } = userData;
 

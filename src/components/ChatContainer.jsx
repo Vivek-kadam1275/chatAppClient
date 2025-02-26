@@ -1,34 +1,20 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Logout from "./Logout.jsx";
 import ChatInput from "./ChatInput.jsx";
 import ChatMessage from "./ChatMessage.jsx";
 import { addMsg, getMsgs } from "../utils/ApiRoutes.jsx";
+import { chatContext } from "../context/chatContext.jsx";
 
 
 var selectedChatCompare;
-const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) => {
-  // trial of socket:
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     socket = io(baseUrl);
+const ChatContainer = ({ }) => {
 
-  //     socket.emit("setup", currentUser);
-  //     socket.on("connected", () => {
-  //       setSocketConnected(true);
-  //     })
-  //   }
-  // }, [])
+  const { currentChat, currentUser, socket, socketConnected, messages, setMessages, typing, setTyping, istyping, setIsTyping ,setMessagesLoading} = useContext(chatContext);
 
-  // console.log(currentChat);
-  const [loading, setLoading] = useState(true);
-  const [messages, setMessages] = useState([]);
-  const [typing, setTyping] = useState(false);
-  const [istyping, setIsTyping] = useState(false);
+ 
 
-  
   const handleSendMsg = async (msg) => {
-    // console.log(msg);
-    // alert(msg);
+
     const to = currentChat._id;
     const from = currentUser._id;
     if (socket && socketConnected) {
@@ -53,6 +39,7 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
 
   }
 
+
   const getMessages = async () => {
     const to = currentChat._id;
     const response = await fetch(getMsgs, {
@@ -66,37 +53,42 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
     })
 
     const data = await response.json();
-    // console.log(data);
+
 
     setMessages(data.data);
-    setLoading(false);
+    setMessagesLoading(false);
 
-    // socket.emit("join-chat", to)
 
   }
 
+  // fetch Messages and join socket to chatroom 
   useEffect(() => {
     getMessages();
-    selectedChatCompare = currentChat;
+    if (socket && socketConnected) {
+      socket.emit("join-chat", to)
+      selectedChatCompare = currentChat;
+    }
   }, [currentChat])
 
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
+  // continuous running useEffect:
   useEffect(() => {
     if (socket && socketConnected) {
 
       socket.on("msg-recieve", (msg) => {
+
         setArrivalMessage({ fromSelf: false, message: msg });
       });
 
-      socket.on("typing",()=>{
+      socket.on("typing", () => {
         console.log('typing')
         setIsTyping(true);
 
 
       })
 
-      socket.on("stop typing",()=>{
+      socket.on("stop typing", () => {
         console.log('stopped typing')
         setIsTyping(false);
       })
@@ -109,7 +101,7 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
 
 
   return (
-    <div className="flex flex-col pt-3 w-3/4  overflow-hidden gap-1">
+    <div className="flex flex-col pt-3 w-3/4 overflow-hidden gap-1">
 
       <div className="chat-header flex justify-between items-center sm:px-2 md:px-4 :lg:px-4 h-[10%] gap-2">
         <div className="user-details flex items-center   gap-4">
@@ -126,8 +118,8 @@ const ChatContainer = ({ currentChat, currentUser, socket, socketConnected }) =>
         </div>
         <Logout />
       </div>
-      <ChatMessage messages={messages} loading={loading} istyping={istyping} />
-      <ChatInput handleSendMsg={handleSendMsg} socket={socket} currentChat={currentChat} setTyping={setTyping} typing={typing} />
+      <ChatMessage   />
+      <ChatInput handleSendMsg={handleSendMsg}   />
 
     </div>
   )
