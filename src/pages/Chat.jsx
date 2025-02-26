@@ -11,7 +11,7 @@ import ContactsContainer from "../components/ContactsContainer";
 var socket;
 const Chat = (props) => {
 
- const {toastOptions,contacts, setContacts,currentUser, setCurrentUser,currentChat, setCurrentChat ,socketConnected, setSocketConnected}=useContext(chatContext);
+ const {toastOptions,  setContacts,currentUser, setCurrentUser,currentChat,  setSocketConnected}=useContext(chatContext);
 
   const navigate = useNavigate();
    
@@ -51,7 +51,7 @@ const Chat = (props) => {
 // After getting currentUser, connect  socket to the socket.io circuit. and do setup
   useEffect(() => {
     if (currentUser) {
-      socket = io(baseUrl);
+     socket = io(baseUrl);
 
       socket.emit("setup", currentUser);
       
@@ -70,7 +70,7 @@ const Chat = (props) => {
       <div className="w-[85vw] h-[85vh] flex   bg-[#00000076]">
         <ContactsContainer/>
 
-        {currentChat === undefined ? <Welcome  /> : <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} socketConnected={socketConnected}/>}
+        {currentChat === undefined ? <Welcome  /> : <ChatContainer socket={socket} />}
       </div>
     </div>
   )

@@ -7,9 +7,9 @@ import { chatContext } from "../context/chatContext.jsx";
 
 
 var selectedChatCompare;
-const ChatContainer = ({ }) => {
+const ChatContainer = ({socket }) => {
 
-  const { currentChat, currentUser, socket, socketConnected, messages, setMessages, typing, setTyping, istyping, setIsTyping ,setMessagesLoading} = useContext(chatContext);
+  const { currentChat, currentUser, socketConnected, messages, setMessages, typing, setTyping , setIsTyping ,setMessagesLoading} = useContext(chatContext);
 
  
 
@@ -17,7 +17,7 @@ const ChatContainer = ({ }) => {
 
     const to = currentChat._id;
     const from = currentUser._id;
-    if (socket && socketConnected) {
+    if (  socketConnected) {
       socket.emit("send-msg", { from, to, msg });
     }
 
@@ -57,24 +57,25 @@ const ChatContainer = ({ }) => {
 
     setMessages(data.data);
     setMessagesLoading(false);
-
+    if ( socketConnected) {
+      socket.emit("join-chat", to)
+      selectedChatCompare = currentChat;
+    }
 
   }
 
   // fetch Messages and join socket to chatroom 
   useEffect(() => {
     getMessages();
-    if (socket && socketConnected) {
-      socket.emit("join-chat", to)
-      selectedChatCompare = currentChat;
-    }
+  
   }, [currentChat])
 
   const [arrivalMessage, setArrivalMessage] = useState(null);
 
+
   // continuous running useEffect:
   useEffect(() => {
-    if (socket && socketConnected) {
+    if (socketConnected) {
 
       socket.on("msg-recieve", (msg) => {
 
@@ -82,15 +83,13 @@ const ChatContainer = ({ }) => {
       });
 
       socket.on("typing", () => {
-        console.log('typing')
-        setIsTyping(true);
+         setIsTyping(true);
 
 
       })
 
       socket.on("stop typing", () => {
-        console.log('stopped typing')
-        setIsTyping(false);
+         setIsTyping(false);
       })
     }
   });
@@ -118,8 +117,8 @@ const ChatContainer = ({ }) => {
         </div>
         <Logout />
       </div>
-      <ChatMessage   />
-      <ChatInput handleSendMsg={handleSendMsg}   />
+      <ChatMessage     />
+      <ChatInput handleSendMsg={handleSendMsg} socket={socket}   />
 
     </div>
   )

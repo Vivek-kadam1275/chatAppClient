@@ -4,8 +4,8 @@ import { IoMdSend } from "react-icons/io";
 import EmojiPicker from "emoji-picker-react";
 import { chatContext } from "../context/chatContext";
 
-const ChatInput = ({  handleSendMsg}) => {
-    const {socket,currentChat,typing,setTyping}=useContext(chatContext);
+const ChatInput = ({  handleSendMsg,socket}) => {
+    const {currentChat,typing,setTyping,socketConnected}=useContext(chatContext);
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [msg, setMsg] = useState("");
@@ -17,10 +17,10 @@ const ChatInput = ({  handleSendMsg}) => {
     const handleChange = (e) => {
         setMsg(e.target.value);
 
-        if(!socket){
+        if(!socketConnected){
             return
         }
-        if(socket && !typing ){
+        if(socketConnected && !typing ){
             setTyping(true);
             socket.emit("typing",currentChat._id)
            
