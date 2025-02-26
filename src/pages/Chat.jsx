@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import Contacts from "../components/Contacts";
-import ChatContainer from "../components/ChatContainer";
+ import ChatContainer from "../components/ChatContainer";
 import { getAllUsers } from "../utils/ApiRoutes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -8,6 +7,7 @@ import Welcome from "../components/Welcome";
 import { io } from "socket.io-client";
 import { baseUrl } from "../utils/ApiRoutes";
 import { chatContext } from "../context/chatContext";
+import ContactsContainer from "../components/ContactsContainer";
 var socket;
 const Chat = (props) => {
 
@@ -68,7 +68,7 @@ const Chat = (props) => {
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen gap-4 bg-[#131324]">
       <div className="w-[85vw] h-[85vh] flex   bg-[#00000076]">
-        <Contacts/>
+        <ContactsContainer/>
 
         {currentChat === undefined ? <Welcome  /> : <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} socketConnected={socketConnected}/>}
       </div>
