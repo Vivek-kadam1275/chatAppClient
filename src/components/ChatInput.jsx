@@ -18,28 +18,25 @@ const ChatInput = ({  handleSendMsg,socket}) => {
 
     const handleChange = (e) => {
         setMsg(e.target.value);
-
-        if(!socketConnected){
-            return
-        }
-        if(socketConnected && !typing ){
+    
+        if (!socketConnected) return;
+    
+        if (!typing) {
             setTyping(true);
-            socket.emit("typing",{currentChat,currentUser})
-           
+            socket.emit("typing", { currentChat, currentUser });
         }
-
-        lastTypingTimeRef.current = new Date().getTime();  // ✅ Store last typing time globally
-        var timerLength = 3000;
-        setTimeout(() => {
-          var timeNow = new Date().getTime();
-          var timeDiff = timeNow - lastTypingTimeRef.current;
-          if (timeDiff >= timerLength && typing) {
-            socket.emit("stop typing", {currentChat,currentUser});
+    
+        // Clear previous timeout before setting a new one
+        if (lastTypingTimeRef.current) {
+            clearTimeout(lastTypingTimeRef.current);
+        }
+    
+        lastTypingTimeRef.current = setTimeout(() => {
+            socket.emit("stop-typing", { currentChat, currentUser });
             setTyping(false);
-          }
-        }, timerLength);
-        // console.log(msg)
-    }
+        }, 3000);
+    };
+    
 
     // add selected emoji to message
     const handleEmojiClick = (emojiObject) => {

@@ -11,7 +11,7 @@ import ContactsContainer from "../components/ContactsContainer";
 var socket;
 const Chat = (props) => {
 
-  const { toastOptions, setContacts, currentUser, setCurrentUser, setSocketConnected, socketConnected, setIsTyping, setMessages, currentChat,messages } = useContext(chatContext);
+  const { toastOptions, setContacts, currentUser, setCurrentUser, setSocketConnected, socketConnected, setIsTyping, setMessages, currentChat, messages } = useContext(chatContext);
 
   const navigate = useNavigate();
 
@@ -56,6 +56,7 @@ const Chat = (props) => {
       socket.emit("setup", currentUser);
 
       socket.on("connected", () => {
+
         setSocketConnected(true);
       })
     }
@@ -70,10 +71,6 @@ const Chat = (props) => {
   }, [currentUser]);
 
 
-  // const [arrivalMessage, setArrivalMessage] = useState(null);
-  // useEffect(() => {
-  //   arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  // }, [arrivalMessage]);
 
   // continuous running useEffect:
   useEffect(() => {
@@ -81,38 +78,37 @@ const Chat = (props) => {
 
 
     const handleMessageReceive = (data) => {
-      console.log("message recived...")
       if (!currentChat || currentChat._id !== data.from) {
-        console.log("not in chat...");
-
-
-      } else {
-        // setArrivalMessage({ fromSelf: false, message: data.msg });
-        setMessages( (prev)=>[...prev,{fromSelf: false, message: data.msg}])
-
+        console.log("Message received, but not in the correct chat.");
+        return;
       }
+      setMessages((prev) => [...prev, { fromSelf: false, message: data.msg }]);
     };
 
     const handleTyping = (data) => {
-
-      setIsTyping(true);
-
+       console.log("started")
+      
+      if(data===currentChat._id){
+        setIsTyping(true);
+      }
     }
 
     const handleStopTyping = (data) => {
 
-      setIsTyping(false);
-
+      console.log("stopped")
+     
+      setIsTyping(false)
+    
     };
 
     socket.on("msg-recieve", handleMessageReceive);
     socket.on("typing", handleTyping);
-    socket.on("stop typing", handleStopTyping);
+    socket.on("stop-typing", handleStopTyping);
 
     return () => {
       socket.off("msg-recieve", handleMessageReceive);
       socket.off("typing", handleTyping);
-      socket.off("stop typing", handleStopTyping);
+      socket.off("stop-typing", handleStopTyping);
     };
   }, [socketConnected, currentChat]);
 
