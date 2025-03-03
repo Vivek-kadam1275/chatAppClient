@@ -3,9 +3,11 @@ import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import EmojiPicker from "emoji-picker-react";
 import { chatContext } from "../context/chatContext";
+import { useRef } from "react";
 
 const ChatInput = ({  handleSendMsg,socket}) => {
-    const {currentChat,typing,setTyping,socketConnected}=useContext(chatContext);
+    const {currentChat,typing,setTyping,socketConnected,currentUser}=useContext(chatContext);
+    const lastTypingTimeRef = useRef(null);
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [msg, setMsg] = useState("");
@@ -22,17 +24,17 @@ const ChatInput = ({  handleSendMsg,socket}) => {
         }
         if(socketConnected && !typing ){
             setTyping(true);
-            socket.emit("typing",currentChat._id)
+            socket.emit("typing",{currentChat,currentUser})
            
         }
 
-        let lastTypingTime = new Date().getTime();
+        lastTypingTimeRef.current = new Date().getTime();  // ✅ Store last typing time globally
         var timerLength = 3000;
         setTimeout(() => {
           var timeNow = new Date().getTime();
-          var timeDiff = timeNow - lastTypingTime;
+          var timeDiff = timeNow - lastTypingTimeRef.current;
           if (timeDiff >= timerLength && typing) {
-            socket.emit("stop typing", currentChat._id);
+            socket.emit("stop typing", {currentChat,currentUser});
             setTyping(false);
           }
         }, timerLength);

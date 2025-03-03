@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
- import ChatContainer from "../components/ChatContainer";
+import ChatContainer from "../components/ChatContainer";
 import { getAllUsers } from "../utils/ApiRoutes";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -11,18 +11,18 @@ import ContactsContainer from "../components/ContactsContainer";
 var socket;
 const Chat = (props) => {
 
- const {toastOptions,  setContacts,currentUser, setCurrentUser,currentChat,  setSocketConnected}=useContext(chatContext);
+  const { toastOptions, setContacts, currentUser, setCurrentUser, setSocketConnected, socketConnected, setIsTyping, setMessages, currentChat,messages } = useContext(chatContext);
 
   const navigate = useNavigate();
-   
-    
+
+
   const fetchContactsData = async () => {
     const response = await fetch(getAllUsers, {
       method: "GET",
       credentials: "include",
     })
     const data = await response.json();
-     if (data.success) {
+    if (data.success) {
       setContacts(data.contacts);
       setCurrentUser(data.currentUser);
     } else {
@@ -47,30 +47,84 @@ const Chat = (props) => {
   }, [currentUser])
 
 
-   
-// After getting currentUser, connect  socket to the socket.io circuit. and do setup
+
+  // After getting currentUser, connect  socket to the socket.io circuit. and do setup
   useEffect(() => {
     if (currentUser) {
-     socket = io(baseUrl);
+      socket = io(baseUrl);
 
       socket.emit("setup", currentUser);
-      
+
       socket.on("connected", () => {
         setSocketConnected(true);
       })
     }
-  }, [currentUser]);
-  
 
-   
+
+    return () => {
+      if (socket) {
+        socket.disconnect();  // 4️⃣ Disconnects the WebSocket
+        console.log("Socket disconnected");
+      }
+    };
+  }, [currentUser]);
+
+
+  // const [arrivalMessage, setArrivalMessage] = useState(null);
+  // useEffect(() => {
+  //   arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  // }, [arrivalMessage]);
+
+  // continuous running useEffect:
+  useEffect(() => {
+    if (!socketConnected) return;
+
+
+    const handleMessageReceive = (data) => {
+      console.log("message recived...")
+      if (!currentChat || currentChat._id !== data.from) {
+        console.log("not in chat...");
+
+
+      } else {
+        // setArrivalMessage({ fromSelf: false, message: data.msg });
+        setMessages( (prev)=>[...prev,{fromSelf: false, message: data.msg}])
+
+      }
+    };
+
+    const handleTyping = (data) => {
+
+      setIsTyping(true);
+
+    }
+
+    const handleStopTyping = (data) => {
+
+      setIsTyping(false);
+
+    };
+
+    socket.on("msg-recieve", handleMessageReceive);
+    socket.on("typing", handleTyping);
+    socket.on("stop typing", handleStopTyping);
+
+    return () => {
+      socket.off("msg-recieve", handleMessageReceive);
+      socket.off("typing", handleTyping);
+      socket.off("stop typing", handleStopTyping);
+    };
+  }, [socketConnected, currentChat]);
+
+
 
 
   return (
     <div className="flex flex-col justify-center items-center w-screen h-screen gap-4 bg-[#131324]">
       <div className="w-[85vw] h-[85vh] flex   bg-[#00000076]">
-        <ContactsContainer/>
+        <ContactsContainer />
 
-        {currentChat === undefined ? <Welcome  /> : <ChatContainer socket={socket} />}
+        {currentChat === undefined ? <Welcome /> : <ChatContainer socket={socket} />}
       </div>
     </div>
   )

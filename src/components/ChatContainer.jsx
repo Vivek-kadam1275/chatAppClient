@@ -4,20 +4,20 @@ import ChatInput from "./ChatInput.jsx";
 import ChatMessage from "./ChatMessage.jsx";
 import { addMsg, getMsgs } from "../utils/ApiRoutes.jsx";
 import { chatContext } from "../context/chatContext.jsx";
+import { data } from "react-router-dom";
 
 
 var selectedChatCompare;
-const ChatContainer = ({socket }) => {
+const ChatContainer = ({ socket }) => {
 
-  const { currentChat, currentUser, socketConnected, messages, setMessages, typing, setTyping , setIsTyping ,setMessagesLoading} = useContext(chatContext);
+  const { currentChat, currentUser, socketConnected, messages, setMessages, typing, setTyping, setIsTyping, setMessagesLoading } = useContext(chatContext);
 
- 
-
+   
   const handleSendMsg = async (msg) => {
 
     const to = currentChat._id;
     const from = currentUser._id;
-    if (  socketConnected) {
+    if (socketConnected) {
       socket.emit("send-msg", { from, to, msg });
     }
 
@@ -57,45 +57,73 @@ const ChatContainer = ({socket }) => {
 
     setMessages(data.data);
     setMessagesLoading(false);
-    if ( socketConnected) {
-      socket.emit("join-chat", to)
-      selectedChatCompare = currentChat;
-    }
+    // if (socketConnected) {
+    //   socket.emit("join-chat", to)
+    //   selectedChatCompare = currentChat;
+    // }
 
   }
 
   // fetch Messages and join socket to chatroom 
   useEffect(() => {
     getMessages();
-  
+    selectedChatCompare = currentChat;
+    // console.log(currentChat);
   }, [currentChat])
 
-  const [arrivalMessage, setArrivalMessage] = useState(null);
+  
 
 
+ 
   // continuous running useEffect:
-  useEffect(() => {
-    if (socketConnected) {
 
-      socket.on("msg-recieve", (msg) => {
+  // useEffect(() => {
 
-        setArrivalMessage({ fromSelf: false, message: msg });
-      });
+    
+  //   if (!socketConnected) return;
 
-      socket.on("typing", () => {
-         setIsTyping(true);
+  //   console.log("👂 Listening for messages...");
 
+  //   const handleMessageReceive = (data) => {
+  //      console.log("message recived...")
+  //     if (currentChat._id !== data.from  || !currentChat ) {
+  //       console.log("not in chat...");
+  //     } else {
+  //       setArrivalMessage({ fromSelf: false, message: data.msg });
+  //     }
+  //   };
 
-      })
+  //   const handleTyping = (room) => {
+  //     if (currentChat._id === room) {
+  //       setIsTyping(true)
+  //     } else {
+  //       // console.log(currentChat._id);
+  //       // console.log(room);
+  //       console.log("not in chat...");
+  //     }
+  //   }
 
-      socket.on("stop typing", () => {
-         setIsTyping(false);
-      })
-    }
-  });
-  useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage]);
+  //   const handleStopTyping = (room) => {
+  //     if (currentChat._id === room) {
+  //       setIsTyping(false)
+  //     } else {
+  //       // console.log(currentChat._id);
+  //       // console.log(room);
+  //       console.log("not in chat...");
+  //     }
+  //   };
+
+  //   socket.on("msg-recieve", handleMessageReceive);
+  //   socket.on("typing", handleTyping);
+  //   socket.on("stop typing",handleStopTyping);
+
+  //   return () => {
+  //     socket.off("msg-recieve", handleMessageReceive);
+  //     socket.off("typing", handleTyping);
+  //     socket.off("stop typing", handleStopTyping);
+  //   };
+  // },[socketConnected]);
+
 
 
 
@@ -117,8 +145,8 @@ const ChatContainer = ({socket }) => {
         </div>
         <Logout />
       </div>
-      <ChatMessage     />
-      <ChatInput handleSendMsg={handleSendMsg} socket={socket}   />
+      <ChatMessage />
+      <ChatInput handleSendMsg={handleSendMsg} socket={socket} />
 
     </div>
   )
