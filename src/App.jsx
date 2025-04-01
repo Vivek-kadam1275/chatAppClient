@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Signup from './pages/Signup.jsx'
  import Chat from './pages/Chat.jsx';
 import Login from './pages/Login.jsx';
@@ -34,10 +34,15 @@ function App() {
           <SetAvatar/>
     },     
   ])
+
+   
+
+  
   return (
     <>
       <RouterProvider router={router}/>
       <Toaster/>
+       
     </>
   )
 }
